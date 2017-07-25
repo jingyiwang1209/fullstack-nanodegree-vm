@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+   <head>
+      <title>My Hot Language</title>
+      <!-- <meta property="og:url"   content="https://jingyiwang1209.github.io/MyPortfolio/" /> -->
+      <!-- <meta property="og:type"      content="website" />
+         <meta property="og:title"       content="My Portfolio" />
+         <meta property="og:description"    content="Projects and recommendations" />
+         <meta property="og:image"      content="" /> -->
+      <meta name="google-signin-client_id" content="1006794923213-0b48jmmndd7vmarsdn74ihbhi7la4c6c.apps.googleusercontent.com">
+      <meta charset="utf-8">
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.min.css')}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='slick/slick.css')}}"/>
+      <!--  // Add the new slick-theme.css if you want the default styling -->
+      <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'slick/slick-theme.css')}}"/>
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style_lan.css')}}">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+      <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+      <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+   </head>
+   <body>
+      {% block content %}
+      {% endblock %}
+   </body>
+</html>

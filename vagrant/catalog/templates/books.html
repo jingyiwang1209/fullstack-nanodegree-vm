@@ -1,0 +1,104 @@
+{% extends "for_inheritance.html" %}
+{% block content %}
+{% include "header_logged.html" %}
+<!-- cate [(u'CSS',), (u'Flask',), (u'HTML',), (u'Java',), (u'JavaScript',), (u'Python',), (u'React',)] -->
+<div class='flash'>
+   {% with message = get_flashed_messages() %}
+   <h2>{{message[0]}}</h2>
+   {% endwith %}
+</div>
+<article class='bookDetails'>
+   <div class='leftDetail'><img src ="" class='picture'></div>
+   <div class='rightDetail'>
+      <ul>
+         <li>Name: <span class='name'></span></li>
+         <li>Author: <span class='author'></span></li>
+         <li><a href="#" target="_blank" class='link'>Link to Subscribe</a></li>
+         <li>Category: </span><a href="#" tar get="_blank" class='category'></a></li>
+         <a class='detail' href='#'><button>Details</button></a>
+      </ul>
+   </div>
+</article>
+
+<main>
+   <ul class='left'>
+      {% for cate in categories %}
+      {% if cate[1] >= 3 %}
+      <li style='border-color: red'><a style='color:red' href ="{{url_for('expandCategories',book_category=cate[0])}}">{{cate[0]}} <span>🌶️</span></a></li>
+      {% else %}
+      <li><a href ="{{url_for('expandCategories',book_category=cate[0])}}">{{cate[0]}}</a></li>
+      {% endif %}
+      {% endfor %}
+   </ul>
+   {% if bookCarousel != [] %}
+   <div class="bookCarousel">
+      {% for bc in bookCarousel %}
+      <a class='carouselItem' href="{{url_for('expandBooks', book_id=bc['bookid'])}}"><img src={{bc.picture[0]}}><span class='averPoint'>{{bc.star}} ⭐</span></a>
+      {% endfor %}
+   </div>
+   {% endif %}
+   <div class='mainRight'>
+      <div class='bookZone'>
+         <div class='latest'>
+            <h2 class='ltitle' style='margin-top:0;padding:0;'>Latest added books<span class='sort' style='float: right; font-size:1.2rem;vertical-align:text-bottom;font-weight: normal;padding-top:8px;'>Sort by <i class="fa fa-heart" aria-hidden="true" style='color:#DC143C'></i></span></h2>
+            <ul class='latestadded'></ul>
+         </div>
+         <div class='more'>
+            <h2 class='mtitle' style='margin-top: 0'><span>More books</span></h2>
+            <ul class='moreadded'></ul>
+         </div>
+      </div>
+      <!-- bookZone -->
+      <!-- for con in contributors:
+         username=session.query(User).filter_by(id=con[0]).one();
+         number=con[1]
+         booklist=session.query(Book).filter_by(user_id=con[0]).all()
+         contributor={'username': username,'number':1, 'booklist':booklist}
+         lst.append(contributor)
+         -->
+      <div class='contributerZone' style='font-size: 1.1em' >
+         {% if lst != [] %}
+         <a href="{{url_for('userBooks',book_userid=lst[0]['userid'])}}" style='text-align: center'>
+            <div class='topContributor' style='position: relative; padding:10%; border-radius: 5px;margin-top: 40px'>
+               <div class='layer' style='background: url("{{lst[0]['picture'][0]}}") no-repeat;background-size:cover; filter:opacity(35%);position:absolute;top:0;left:0;right:0;bottom:0;display:block;border-radius: 5px;'>
+            </div>
+            <h4 style='margin-top: 0'>FEATURED CONTRIBUTOR</h4>
+            <div class='topImageWrapper' style='text-align: center;'><img src="{{lst[0]['picture'][0]}}" class='topImage' style='width: 40%;border:2px solid #000'></div>
+            <p style="line-height: 1.2">{{lst[0]['username'][0]}}</</p>
+            </br>Contributed {{lst[0]['number']}} books!</p>
+            <button style='border-radius: 5px;border-color:#000;background-color: transparent; padding:5% 15%;letter-spacing: 1.5px;'>BOOK LIST</button>
+      </div>
+      </a>
+      <div class='otherContributors'>
+         <H4>TOP CONTRIBUTORS</H4>
+         <ul class='otherList'>
+            {% for l in lst %}
+            <a href="{{url_for('userBooks',book_userid=l['userid'])}}">
+               <li class='other'>
+                  <div><img class='userImage' src={{l['picture'][0]}}></div>
+                  <p class='otherName'>{{l['username'][0]}}</p>
+               </li>
+            </a>
+            {% endfor %}
+         </ul>
+      </div>
+      {% endif %}
+   </div>
+   </div><!-- mainRight -->
+</main>
+
+<script src="{{ url_for('static', filename='general.js') }}"></script>
+<script src="{{ url_for('static', filename='loginPanel.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='slick/slick.min.js')}}"></script>
+<script>
+   $(document).ready(function(){
+   $('.bookCarousel').slick({
+   slidesToShow: 5,
+   slidesToScroll: 1,
+   autoplay: true,
+   autoplaySpeed: 2500,
+   dots: true,
+   });
+   });
+</script>
+{% endblock %}

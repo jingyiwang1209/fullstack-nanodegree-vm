@@ -1,0 +1,39 @@
+{% extends "for_inheritance.html" %}
+{% block content %}
+{% include "header_logged.html" %}
+<main>
+   {% for book in books %}
+   <div class='book'>
+      <div class='leftDetail'><img src ="{{book.picture}}"></div>
+      <div class='rightDetail'>
+         <ul>
+            <li>Name: {{book.name}}</li>
+            <li>Author: {{book.author}}</li>
+            <li>Description: {{book.description}}</li>
+            <li><a href="{{book.link}}" target="_blank">Link to Subscribe</a></li>
+            <li>Category: <a href="{{url_for('expandCategories', book_category=book.category)}}" target="_blank">{{book.category}}</a></li>
+            <a href="{{url_for('editBooks',book_id=book.id)}}"><button class='editButton'>Edit</button></a>
+         </ul>
+      </div>
+   </div>
+   {%  endfor %}
+</main>
+
+<script src ="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script>
+//When the page is returned, it will go to the previous location that the user read.
+  $(function () {
+      var str = window.location.href;
+      str = str.substring(str.lastIndexOf("/") + 1);
+      if ($.cookie(str)) {
+      $("html,body").animate({ scrollTop: $.cookie(str) }, 1000);}});
+      $(window).scroll(function () {
+      var str = window.location.href;
+      str = str.substring(str.lastIndexOf("/") + 1);
+      var top = $(document).scrollTop();
+      $.cookie(str, top, { path: '/' });
+      return $.cookie(str);
+});
+</script>
+<script src="{{ url_for('static', filename='loginPanel.js') }}"></script>
+{% endblock %}

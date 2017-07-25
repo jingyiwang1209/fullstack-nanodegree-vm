@@ -1,0 +1,22 @@
+<header>
+   <div class='inner'>
+      <div class='innerLeft'>
+         <a href="{{url_for('showBooks')}}"><span class='logo'>WE LOVE CODING</span></a>
+      </div>
+      <div class='innerRight'>
+         <form action='#'' method='post' value='search' id='searchForm' class='searchForm'>
+            {{ searchForm.csrf_token }}
+            <i class="fa fa-search fa-3x" aria-hidden="true"></i>
+            <input name='search' class='searchPanel' type='text' placeholder="Search book">
+         </form>
+         <a href="{{url_for('newBooks')}}" ><i class="fa fa-plus" aria-hidden="true"></i></a>
+         <nav class='dropdown'>
+            <img class ='dropdown-btn userImage' src='{{picture}}'>
+         </nav>
+      </div>
+      <ul class='dropdown-content'>
+         <li><a href="{{url_for('myList')}}">My Books</a></li>
+         <li><a href="{{url_for('logout')}}" >Logout</a></li>
+      </ul>
+   </div>
+</header>

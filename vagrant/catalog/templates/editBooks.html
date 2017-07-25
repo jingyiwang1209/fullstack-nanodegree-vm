@@ -1,0 +1,81 @@
+{% extends "for_inheritance.html" %}
+{% block content %}
+{% include "header_logged.html" %}
+<main>
+   <div class='flash'>
+      {% with message = get_flashed_messages() %}
+      <h2>{{message[0]}}</h2>
+      {% endwith %}
+   </div>
+   <div class='result'></div>
+   <div class='newBook editBook'>
+      <form action="#" method="post" value='add' id='newBookForm'>
+         {{ form.csrf_token }}
+         <label for='picture'>Picture:
+         <input type='text' name='picture' value="{{editedBook.picture}}"></label>
+         <label for='name'>Name:
+         <input type='text' name='name' value="{{editedBook.name}}"></label>
+         <label for='author'>Author:
+         <input type='text' name='author' value="{{editedBook.author}}"></label>
+         <label for='description'>Description:
+         <textarea type='text' name='description' rows="4" cols="70" > {{editedBook.description}}</textarea></label>
+         <label for='link'>Link:
+         <input type='text' name='link' value="{{editedBook.link}}"></label>
+         <label>
+            Category:
+            <select name='category'>
+               {% for category in categories %}
+               <option value="{{category[0]}}">{{category[0]}}</option>
+               {% endfor %}
+            </select>
+         </label>
+         <div class='buttonSet'>
+            <button class= 'saveBook' id='submit' type='submit'>Save</button>
+            <a href="{{url_for('myList')}}" ><button class='goBack'>Never mind</button></a>
+            <button class='confirmDelete' type='button'>Delete this book</button>
+         </div>
+      </form>
+   </div>
+   <div class='deletePanel'>
+      <div class='buttons'>
+         <h2>Are you sure you want to delete {{editedBook.name}}?</h2>
+         <button class='deleteBtn' id='delete{{editedBook.id}}'>Delete</button></a>
+      </div>
+   </div>
+</main>
+
+<script>
+  var result=$('.result');
+  var deletePanel=$('.deletePanel');
+  var confirmDelete=$('.confirmDelete');
+  confirmDelete.on('click',function(){
+    deletePanel.show();
+  });
+
+  var deleteBtn=$('.deleteBtn');
+  var delId=deleteBtn.attr('id').split('delete')[1];
+  var data={'delId':delId};
+  deleteBtn.on('click',function(){
+    $.ajax({
+    url: "{{url_for('deleteBooks')}}",
+          dataType:'json',
+          type: 'POST',
+          data: JSON.stringify(data),
+          contentType: 'application/json;charset=UTF-8',
+    })
+    .done(function(res){
+      result.text('This book is deleted.');
+      setTimeout(function(){
+          window.location.href = "/books/mylist"}, 2000)
+    });
+
+  });
+  var deletePanel=$('.deletePanel');
+  deletePanel.on('click',function(){
+    deletePanel.hide();
+  });
+
+</script>
+<script src="{{ url_for('static', filename='loginPanel.js') }}"></script>
+
+{% endblock %}

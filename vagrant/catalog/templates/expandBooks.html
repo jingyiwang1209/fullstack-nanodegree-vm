@@ -1,0 +1,49 @@
+{% extends "for_inheritance.html" %}
+{% block content %}
+{% include "header_logged.html" %}
+<main>
+   <div class='flash'>
+      {% with message = get_flashed_messages() %}
+      <h2>{{message[0]}}</h2>
+      {% endwith %}
+   </div>
+   <div class='book'>
+      <div class='leftDetail'><img src ="{{book.picture}}"></div>
+      <div class='rightDetail'>
+         <ul>
+            <li><span>Name: </span>{{book.name}}</li>
+            <li><span>Author: </span>{{book.author}}</li>
+            <li>Rating:
+               {% if points[0][0] != 0 %}
+               <span class='averPoints'>{{points[0][1]}} </span>
+               <span class='starList'></span>
+               {% else %}
+               <span class='averPoints'>No rating yet</span>
+               {% endif %}
+            </li>
+            <li><a href="{{book.link}}" target="_blank">Link to Subscribe</a></li>
+            <li><span>Category: </span><a href="{{url_for('expandCategories', book_category=book.category)}}" target="_blank">{{book.category}}</a></li>
+            <li><span>Description: </span>{{book.description}}</li>
+         </ul>
+      </div>
+   </div>
+   <div class='feedbackZone'>
+      <div class='result'></div>
+      <div class='stars'>
+         <span><i class="fa fa-star" aria-hidden="true"></i></span>
+         <span><i class="fa fa-star" aria-hidden="true"></i></span>
+         <span><i class="fa fa-star" aria-hidden="true"></i></span>
+         <span><i class="fa fa-star" aria-hidden="true"></i></span>
+         <span><i class="fa fa-star" aria-hidden="true"></i></span>
+         <span class='point'></span>
+      </div>
+      <textarea rows="5" cols="50" class='feedback' id='for{{book.id}}'></textarea>
+      <button type='button' class='sendFeedback'>Submit</button>
+      <div class='feedbacks'></div>
+   </div>
+</main>
+
+<script src="{{ url_for('static', filename='starEffect.js') }}"></script>
+<script src="{{ url_for('static', filename='handleStar.js') }}"></script>
+<script src="{{ url_for('static', filename='loginPanel.js') }}"></script>
+{% endblock %}

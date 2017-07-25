@@ -1,0 +1,17 @@
+{% extends "for_inheritance.html" %}
+{% block content %}
+{% include "header_unlogged.html" %}
+
+<main>
+   <h2>{{category}}</h2>
+   <ul style='line-height: 1.5'>
+      {% for book in books %}
+      <a href="{{url_for('expandBooks', book_id=book.id)}}">
+         <li>{{book.name}}</li>
+      </a>
+      {% endfor %}
+   </ul>
+</main>
+
+<script src="{{ url_for('static', filename='signup.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "for_inheritance.html" %}
+{% block content %}
+{% include "header_unlogged.html" %}
+
+<main>
+   {% for book in books %}
+   <div class='book'>
+      <div class='leftDetail'><img src ="{{book.picture}}"></div>
+      <div class='rightDetail'>
+         <ul>
+            <li>Name: {{book.name}}</li>
+            <li>Author: {{book.author}}</li>
+            <li>Description: {{book.description}}</li>
+            <li><a href="{{book.link}}" target="_blank">Link to Subscribe</a></li>
+            <li>Category: <a href="{{url_for('expandCategories', book_category=book.category)}}" target="_blank">{{book.category}}</a></li>
+         </ul>
+      </div>
+   </div>
+   {%  endfor %}
+</main>
+
+<script src="{{ url_for('static', filename='signup.js') }}"></script>
+
+{% endblock %}
