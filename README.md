@@ -8,4 +8,6 @@
 ## 6. Run ```python lan_project.py``` to run the application.
 ## 7. Open your browser and go to http://localhost:8000
 
-### Note: You are supposed to see the homepage of the application. You can read and search other users' items in the   application without logging into it. To create, edit your own items, 'like' items, write feedback on items and read other users' feedback, you have to login to the app.
+### Now you are supposed to see the homepage of the application. 
+
+### Note: You can read and search other users' items in the application without logging into it. To create, edit your own items, 'like' items, write feedback on items and read other users' feedback, you have to login to the app.
