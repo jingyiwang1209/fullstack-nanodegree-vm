@@ -54,6 +54,7 @@ def booksJSON():
     return jsonify(books=[b.serialize for b in books])
 
 
+# Deal with the click of like. It is toggled btw like and cancelling like
 @app.route('/like', methods=['POST'])
 def like():
     likeId = request.json['likeId']
@@ -85,6 +86,8 @@ def like():
                           'clicks': likedInteraction.like, 'msg': msg})
 
 
+# Get all the items' data in descending order so that
+# the top 4 can be placed under the 'Latest Added Books' area.
 @app.route('/getData')
 def getData():
     lst = []
@@ -100,6 +103,8 @@ def getData():
     return json.dumps({'list': lst})
 
 
+# Get sorted data for the users who want to review the books
+# based on the like records.
 @app.route('/getSort')
 def getSort():
     sortedInteractions = session.query(Interaction)\
@@ -117,6 +122,7 @@ def getSort():
     return json.dumps({'sorted': lst})
 
 
+# Home page
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/books', methods=['POST', 'GET'])
 def showBooks():
@@ -200,6 +206,7 @@ def showBooks():
                                    searchForm=searchForm)
 
 
+# Connect with Goolge account
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Deal with Google sign in
@@ -304,7 +311,7 @@ def getUserID(email):
         return None
 
 
-# Deal with Facebook signin
+# Connect with Facebook account
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
     if request.args.get('state') != login_session['state']:
@@ -392,37 +399,40 @@ def logout():
     return redirect(url_for('showBooks'))
 
 
+# Verify the submission of new books and make sure only loggedin user can do it
 @app.route('/submittedNewBook', methods=['POST'])
 def submittedNewBook():
     form = NewBookForm()
-    if form.validate_on_submit():
-        newBook = Book(picture=form.picture.data,
-                       name=form.name.data,
-                       author=form.author.data,
-                       description=form.description.data,
-                       link=form.link.data,
-                       category=form.category.data,
-                       user_id=login_session['user_id'])
+    if 'username' in login_session:
+        if form.validate_on_submit():
+            newBook = Book(picture=form.picture.data,
+                           name=form.name.data,
+                           author=form.author.data,
+                           description=form.description.data,
+                           link=form.link.data,
+                           category=form.category.data,
+                           user_id=login_session['user_id'])
 
-        session.add(newBook)
-        session.commit()
+            session.add(newBook)
+            session.commit()
 
-        newInteraction = Interaction(book_id=newBook.id)
-        session.add(newInteraction)
-        session.commit()
+            newInteraction = Interaction(book_id=newBook.id)
+            session.add(newInteraction)
+            session.commit()
 
-        # print"newInteraction.id!!!!!!", newInteraction.id
-        # print"newInteraction.book_id!!!!!!", newInteraction.book_id
-        # print"newInteraction.like!!!!!!", newInteraction.like
+            # print"newInteraction.id!!!!!!", newInteraction.id
+            # print"newInteraction.book_id!!!!!!", newInteraction.book_id
+            # print"newInteraction.like!!!!!!", newInteraction.like
 
-        success = 'The book was successfully added.'
-        return json.dumps({'success': success})
+            success = 'The book was successfully added.'
+            return json.dumps({'success': success})
 
-    else:
-        failure = 'Bummer: please fill all the areas.'
+        else:
+            failure = 'Bummer: please fill all the areas.'
         return json.dumps({'failure': failure})
 
 
+# Verify the submission of search term
 @app.route('/books/new', methods=['GET', 'POST'])
 def newBooks():
     searchForm = SearchForm()
@@ -450,6 +460,7 @@ def newBooks():
                                form=form, searchForm=searchForm)
 
 
+# For the quick view of a book
 @app.route('/bookDetails', methods=['POST'])
 def bookDetails():
     data = request.json['bookId']
@@ -460,6 +471,7 @@ def bookDetails():
                        'bookId': book.id})
 
 
+# Check the detail of a book
 @app.route('/books/<int:book_id>', methods=['POST', 'GET'])
 def expandBooks(book_id):
     searchForm = SearchForm()
@@ -497,6 +509,7 @@ def expandBooks(book_id):
                                    book=book, points=points)
 
 
+# Verify the submission of editing a book and make sure only loggedin user can do it
 @app.route('/books/<int:book_id>/edit', methods=['POST', 'GET'])
 def editBooks(book_id):
     categories = session.query(
@@ -508,7 +521,7 @@ def editBooks(book_id):
     searchForm = SearchForm()
     form = NewBookForm()
     if request.method == 'POST':
-        if form.validate_on_submit():
+        if form.validate_on_submit() and 'username' in login_session and editedBook.user_id == login_session['user_id']:
             editedBook.picture = request.form['picture']
             editedBook.name = request.form['name']
             editedBook.author = request.form['author']
@@ -539,22 +552,25 @@ def editBooks(book_id):
                                searchForm=searchForm, form=form)
 
 
+# Verify the submission of deleting a book and make sure only loggedin user can do it
 @app.route('/delete', methods=['POST'])
 def deleteBooks():
     delId = request.json['delId']
     deletedBook = session.query(Book).filter_by(id=delId).one()
 
-    deletedInteraction = session.query(Interaction)\
-        .filter_by(book_id=delId).one()
-    session.delete(deletedInteraction)
-    session.commit()
+    if 'username' in login_session and deletedBook.user_id == login_session['user_id']:
+        deletedInteraction = session.query(Interaction)\
+            .filter_by(book_id=delId).one()
+        session.delete(deletedInteraction)
+        session.commit()
 
-    session.delete(deletedBook)
-    session.commit()
+        session.delete(deletedBook)
+        session.commit()
 
-    return json.dumps({'delId': delId})
+        return json.dumps({'delId': delId})
 
 
+# Show all the books under a category
 @app.route('/books/<book_category>', methods=['POST', 'GET'])
 def expandCategories(book_category):
     searchForm = SearchForm()
@@ -589,6 +605,7 @@ def expandCategories(book_category):
                                    searchForm=searchForm)
 
 
+# Show a book list of a loggedin user's
 @app.route('/books/mylist', methods=['POST', 'GET'])
 def myList():
     id = login_session['user_id']
@@ -615,6 +632,7 @@ def myList():
                                    searchForm=searchForm)
 
 
+# Review other users' book lists
 @app.route('/userbooks/<int:book_userid>', methods=['POST', 'GET'])
 def userBooks(book_userid):
     searchForm = SearchForm()
@@ -645,22 +663,26 @@ def userBooks(book_userid):
                                    searchForm=searchForm)
 
 
+# Deal with the submission of the rating from a user and
+# make sure only the loggedin user can do it
 @app.route('/ratings', methods=['POST'])
 def ratings():
-    bookid = request.json['bookid']
-    feedback = request.json['feedback']
-    points = request.json['points']
+    if 'username' in login_session:
+        bookid = request.json['bookid']
+        feedback = request.json['feedback']
+        points = request.json['points']
 
-    rating = Rating(book_id=bookid, feedback=feedback,
-                    star=points, user_id=login_session['user_id'])
-    username = login_session['username']
+        rating = Rating(book_id=bookid, feedback=feedback,
+                        star=points, user_id=login_session['user_id'])
+        username = login_session['username']
 
-    session.add(rating)
-    session.commit()
-    return json.dumps({'bookid': bookid, 'feedback': feedback,
-                      'reader': username, 'points': points})
+        session.add(rating)
+        session.commit()
+        return json.dumps({'bookid': bookid, 'feedback': feedback,
+                          'reader': username, 'points': points})
 
 
+# Show the page with ratings
 @app.route('/getRating', methods=['POST'])
 def getRating():
     bookid = request.json['bookid']
