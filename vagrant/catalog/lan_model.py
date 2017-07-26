@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Time, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, BLOB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
@@ -68,7 +68,7 @@ class Interaction(Base):
     like = Column(Integer, default=0)
     book_id = Column(Integer, ForeignKey('book.id'))
     user_id = Column(Integer)
-    marker = Column(String, default='0;')
+    marker = Column(BLOB, default='0;')
     book = relationship(Book)
 
 
